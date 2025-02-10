@@ -5,6 +5,8 @@ import { FaSave, FaArrowLeft } from "react-icons/fa";
 
 const EditSeat = () => {
   const { seatNumber } = useParams();
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
   const [seat, setSeat] = useState({
     studentName: "",
@@ -40,6 +42,7 @@ const EditSeat = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/seats/seats/${seatNumber}`,
@@ -48,6 +51,8 @@ const EditSeat = () => {
       navigate("/");
     } catch (error) {
       console.error("Error updating seat details:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -120,9 +125,9 @@ const EditSeat = () => {
               onChange={handleChange}
               className="input-field rounded-md px-2 py-1 text-gray-800 bg-[#bfd5df]"
             >
-              <option value="Pending">select</option>
-              <option value="Paid">Paid</option>
               <option value="Pending">Pending</option>
+              <option value="Paid">Paid</option>
+
             </select>
           </div>
 
@@ -151,9 +156,18 @@ const EditSeat = () => {
 
           <button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-all duration-200"
+            disabled={isLoading}
+            className={`bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-all duration-200 ${
+              isLoading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
-            <FaSave /> Save Changes
+            {isLoading ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              <>
+                <FaSave /> Save Changes
+              </>
+            )}
           </button>
         </form>
       </div>

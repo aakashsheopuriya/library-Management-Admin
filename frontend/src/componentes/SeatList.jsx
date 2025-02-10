@@ -9,6 +9,7 @@ const SeatList = () => {
   const [error, setError] = useState(null);
   const [selectedSeat, setSelectedSeat] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const getSeatClasses = (seat) => {
     if (!seat?.studentName)
@@ -30,6 +31,8 @@ const SeatList = () => {
       } catch (error) {
         setError("Error fetching seats.");
         console.error("Error:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchSeats();
@@ -60,6 +63,13 @@ const SeatList = () => {
   };
 
   if (error) return <div className="text-red-500 text-center">{error}</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364]">
+        <div className="w-16 h-16 border-4 border-t-transparent border-b-transparent border-white rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   const arrangedSeats = [
     [1, 2, 3, null, 4, 5, 6, 7, 8],
