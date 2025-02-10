@@ -13,11 +13,8 @@ const seatSchema = new mongoose.Schema({
   },
   feeSubmissionDate: {
     type: Date,
-    default: () => {
-      const now = new Date();
-      return new Date(now.setFullYear(now.getFullYear() + 10)); 
-    },
-  }, 
+    default: null,
+  },
   description: { type: String, default: "" },
 });
 

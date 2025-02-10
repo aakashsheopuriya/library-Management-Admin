@@ -12,15 +12,9 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
-  const seat = await Seat.findById(req.params.id);
-  if (!seat) return res.status(404).json({ message: "Seat not found" });
-  res.json(seat);
-});
-
 router.get("/seats/:seatNumber", async (req, res) => {
   try {
-    const seatNumber = parseInt(req.params.seatNumber); // Convert seatNumber to number
+    const seatNumber = parseInt(req.params.seatNumber);
     const seat = await Seat.findOne({ seatNumber });
 
     if (!seat) {
@@ -36,8 +30,8 @@ router.get("/seats/:seatNumber", async (req, res) => {
 
 router.put("/seats/:seatNumber", async (req, res) => {
   try {
-    const seatNumber = parseInt(req.params.seatNumber); // Convert seatNumber to number
-    const updatedData = req.body; // Data from frontend
+    const seatNumber = parseInt(req.params.seatNumber);
+    const updatedData = req.body;
 
     // Find and update the seat
     const seat = await Seat.findOneAndUpdate(
@@ -57,39 +51,32 @@ router.put("/seats/:seatNumber", async (req, res) => {
   }
 });
 
-// Utility function to check if a month has passed
-// const hasOneMonthPassed = (lastPaymentDate) => {
-//   if (!lastPaymentDate) return true; // If no payment date, mark as pending
-//   const oneMonthAgo = new Date();
-//   oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-//   return new Date(lastPaymentDate) < oneMonthAgo;
-// };
+router.get("/check-fees", async (req, res) => {
+  console.log("hello");
 
-// API to update payment status and return pending students
-// router.get("/update-payments", async (req, res) => {
-//   try {
-//     // console.log("Incoming request to update-payments"); 
-//     const seats = await Seat.find(); // ✅ Should work fine
-//     // console.log("Seats fetched:", seats.length);
+  try {
+    const today = new Date();
 
-//     let pendingStudents = [];
+    const seats = await Seat.find({ feeSubmissionDate: { $ne: null } });
 
-//     for (let seat of seats) {
-//       if (hasOneMonthPassed(seat.feeSubmissionDate)) {
-//         seat.paymentStatus = "Pending";
-//         await seat.save();
-//         pendingStudents.push(seat.studentName);
-//       }
-//     }
+    let updatedStudents = [];
 
-//     res.json({
-//       message: "Payment statuses updated",
-//       pendingStudents,
-//     });
-//   } catch (error) {
-//     console.error("Error updating payments:", error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
+    for (let seat of seats) {
+      const feeDate = new Date(seat.feeSubmissionDate);
+      const timeDifference = today - feeDate;
+      const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+
+      if (daysDifference > 30 && seat.paymentStatus !== "Pending") {
+        seat.paymentStatus = "Pending";
+        await seat.save();
+        updatedStudents.push(seat.studentName);
+      }
+    }
+
+    res.json({ message: "Payment status updated", students: updatedStudents });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 module.exports = router;

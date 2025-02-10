@@ -37,20 +37,18 @@ const SeatList = () => {
     };
     fetchSeats();
 
-    // const updatePaymentStatus = async () => {
-    //   try {
-
-    //     const response = await axios.get(
-    //       `${import.meta.env.VITE_BACKEND_URL}/api/seats/update-payments`
-    //     );
-
-    //     alert(`Pending Payments: ${response.data.pendingStudents.join(", ")}`);
-    //   } catch (error) {
-    //     console.error("Error updating payment status:", error);
-    //   }
-    // };
-
-    // updatePaymentStatus();
+    const checkFees = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/seats/check-fees`
+        );
+        alert(`Pending Payments:  ${response.data.students}`); 
+      } catch (error) {
+        console.error("Error fetching fee data:", error);
+        return [];
+      }
+    };
+    checkFees();
   }, []);
 
   const handleSeatClick = (seat) => {
@@ -91,7 +89,7 @@ const SeatList = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364] flex flex-col items-center py-6">
       <Header />
-      <div className="hidden md:block flex flex-col gap-4 mt-8 ">
+      <div className="hidden md:block  flex-col gap-4 mt-8 ">
         {arrangedSeats.map((row, rowIndex) => (
           <div key={rowIndex} className="flex gap-4 justify-center">
             {row.map((seatNumber, index) => {
@@ -122,7 +120,7 @@ const SeatList = () => {
       </div>
       <div className="md:hidden flex flex-col gap-2 mt-8">
         {arrangedSeats.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex gap-1 justify-center flex-wrap">
+          <div key={rowIndex} className="flex gap-2  justify-center flex-wrap">
             {row.map((seatNumber, index) => {
               if (seatNumber === null) {
                 return <div key={index} className="w-8"></div>;
@@ -131,7 +129,7 @@ const SeatList = () => {
               return (
                 <div
                   key={`${rowIndex}-${seatNumber}`}
-                  className={`w-8 h-8 flex justify-center items-center rounded-md shadow-md border backdrop-blur-lg bg-opacity-20 text-white text-sm md:w-20 md:h-20 md:text-base transition-transform transform hover:scale-105 ${getSeatClasses(
+                  className={`w-9 h-9 my-1  flex justify-center items-center rounded-md shadow-md border backdrop-blur-lg bg-opacity-20 text-white text-sm md:w-20 md:h-20 md:text-base transition-transform transform hover:scale-105 ${getSeatClasses(
                     seat
                   )}`}
                   onClick={() => handleSeatClick(seat)}
