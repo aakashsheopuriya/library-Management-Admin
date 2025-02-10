@@ -35,12 +35,14 @@ const StudentDetail = ({ seat, closeDetail }) => {
             {!seat.studentName ? "Not Available" : seat.paymentStatus}
           </p>
           <p>
+            <strong>Fee Submission Date:</strong>{" "}
+            {!seat.studentName
+              ? "Not Available"
+              : seat.feeSubmissionDate.slice(0, 10)}
+          </p>
+          <p>
             <strong>Description:</strong> {seat.description || "No Description"}
           </p>
-          {/* <p>
-            <strong>Payment History:</strong>{" "}
-            {seat.paymentHistory || "No History"}
-          </p> */}
         </div>
         <button
           onClick={() => navigate(`/edit/${seat.seatNumber}`)}

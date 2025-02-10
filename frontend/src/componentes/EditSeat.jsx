@@ -125,9 +125,9 @@ const EditSeat = () => {
               onChange={handleChange}
               className="input-field rounded-md px-2 py-1 text-gray-800 bg-[#bfd5df]"
             >
+              <option value="select">select</option>
               <option value="Pending">Pending</option>
               <option value="Paid">Paid</option>
-
             </select>
           </div>
 
