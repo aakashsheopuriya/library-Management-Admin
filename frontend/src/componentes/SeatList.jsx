@@ -42,7 +42,8 @@ const SeatList = () => {
         const response = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/api/seats/check-fees`
         );
-        alert(`Pending Payments:  ${response.data.students}`); 
+        {response.data.students.length>0 &&
+        alert(`Pending Payments:  ${response.data.students}`)}
       } catch (error) {
         console.error("Error fetching fee data:", error);
         return [];
