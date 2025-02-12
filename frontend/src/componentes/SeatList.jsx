@@ -42,8 +42,10 @@ const SeatList = () => {
         const response = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/api/seats/check-fees`
         );
-        {response.data.students.length>0 &&
-        alert(`Pending Payments:  ${response.data.students}`)}
+        {
+          response.data.students.length > 0 &&
+            alert(`Pending Payments:  ${response.data.students}`);
+        }
       } catch (error) {
         console.error("Error fetching fee data:", error);
         return [];
@@ -61,7 +63,26 @@ const SeatList = () => {
     setSelectedSeat(null);
   };
 
-  if (error) return <div className="text-red-500 text-center">{error}</div>;
+  if (error)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364] px-6">
+        <div className="max-w-md text-center">
+          <h1 className="text-3xl font-bold text-gray-300 mt-6">
+            Oops! Something went wrong.
+          </h1>
+          <p className="text-gray-400 mt-2">
+            {error || "An unexpected error occurred."}
+          </p>
+
+          <button
+            onClick={() => navigate("/")}
+            className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all"
+          >
+            Go Back Home
+          </button>
+        </div>
+      </div>
+    );
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364]">
