@@ -51,6 +51,38 @@ router.put("/seats/:seatNumber", async (req, res) => {
   }
 });
 
+router.put("/empty/:seatId", async (req, res) => {
+  try {
+    const { seatId } = req.params.seatId;
+    console.log(req.params.seatId);
+
+    // Find and update the seat
+    const updatedSeat = await Seat.findByIdAndUpdate(
+      seatId,
+      {
+        studentName: "",
+        email: "",
+        phone: "",
+        address: "",
+        paymentStatus: "Not Available",
+        feeSubmissionDate: null,
+        description: "",
+      },
+      { new: true } // Returns the updated document
+    );
+
+    if (!updatedSeat) {
+      return res.status(404).json({ message: "Seat not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Seat emptied successfully", seat: updatedSeat });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
 router.get("/check-fees", async (req, res) => {
   try {
     const today = new Date();

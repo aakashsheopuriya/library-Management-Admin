@@ -56,6 +56,21 @@ const EditSeat = () => {
     }
   };
 
+  const emptySeat = async (seatId) => {
+    console.log(seatId);
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/seats/empty/${seatId}`
+      );
+      console.log(response.data.message);
+    } catch (error) {
+      console.error(
+        "Error emptying seat:",
+        error.response?.data?.message || error.message
+      );
+    }
+  };
+
   return (
     <div className="min-h-screen  flex justify-center items-center bg-gradient-to-br from-[#141e30] via-[#243b55] to-[#2c5364] px-4">
       <div className="w-full my-5 max-w-xl bg-white/10 backdrop-blur-lg shadow-xl rounded-2xl p-8 text-white border border-gray-500/20">
@@ -125,27 +140,43 @@ const EditSeat = () => {
               onChange={handleChange}
               className="input-field rounded-md px-2 py-1 text-gray-800 bg-[#bfd5df]"
             >
-              <option value="select">select</option>
+              <option value="Not Available">select</option>
               <option value="Pending">Pending</option>
               <option value="Paid">Paid</option>
             </select>
           </div>
-          {seat.paymentStatus == "Paid" &&  <div className="flex flex-col">
-            <label className="text-gray-300  ">Fee Submission Date</label>
-            <input
-              type="date"
-              required
-              name="feeSubmissionDate"
-              value={
-                seat.feeSubmissionDate
-                  ? new Date(seat.feeSubmissionDate).toISOString().split("T")[0]
-                  : ""
-              }
-              onChange={handleChange}
-              className="input-field rounded-md px-2 py-1 text-gray-800 bg-[#bfd5df]"
-            />
-          </div>}
-         
+          {seat.paymentStatus == "Paid" ? (
+            <div className="flex flex-col">
+              <label className="text-gray-300  ">Fee Submission Date</label>
+              <input
+                type="date"
+                required
+                name="feeSubmissionDate"
+                value={
+                  seat.feeSubmissionDate
+                    ? new Date(seat.feeSubmissionDate)
+                        .toISOString()
+                        .split("T")[0]
+                    : ""
+                }
+                onChange={handleChange}
+                className="input-field rounded-md px-2 py-1 text-gray-800 bg-[#bfd5df]"
+              />
+            </div>
+          ) : (
+            <div className="flex flex-col">
+              <label className="text-gray-300  ">Fee Submission Date</label>
+              <input
+                disabled
+                type="date"
+                required
+                name="feeSubmissionDate"
+                value={null}
+                onChange={handleChange}
+                className="cursor-not-allowed input-field rounded-md px-2 py-1 text-gray-800 bg-[#bfd5df]"
+              />
+            </div>
+          )}
 
           <div className="flex flex-col">
             <label className="text-gray-300 mb-1">Description</label>
@@ -173,6 +204,8 @@ const EditSeat = () => {
               </>
             )}
           </button>
+          <hr />
+          {/* <button onClick={() => emptySeat(seatNumber)}> Empty Seat</button> */}
         </form>
       </div>
     </div>
