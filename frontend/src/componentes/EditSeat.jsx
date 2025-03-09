@@ -130,18 +130,22 @@ const EditSeat = () => {
               <option value="Paid">Paid</option>
             </select>
           </div>
-
-          <input
-            type="date"
-            name="feeSubmissionDate"
-            value={
-              seat.feeSubmissionDate
-                ? new Date(seat.feeSubmissionDate).toISOString().split("T")[0]
-                : ""
-            }
-            onChange={handleChange}
-            className="input-field rounded-md px-2 py-1 text-gray-800 bg-[#bfd5df]"
-          />
+          {seat.paymentStatus == "Paid" &&  <div className="flex flex-col">
+            <label className="text-gray-300  ">Fee Submission Date</label>
+            <input
+              type="date"
+              required
+              name="feeSubmissionDate"
+              value={
+                seat.feeSubmissionDate
+                  ? new Date(seat.feeSubmissionDate).toISOString().split("T")[0]
+                  : ""
+              }
+              onChange={handleChange}
+              className="input-field rounded-md px-2 py-1 text-gray-800 bg-[#bfd5df]"
+            />
+          </div>}
+         
 
           <div className="flex flex-col">
             <label className="text-gray-300 mb-1">Description</label>

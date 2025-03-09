@@ -38,7 +38,7 @@ const StudentDetail = ({ seat, closeDetail }) => {
             <strong>Fee Submission Date:</strong>{" "}
             {!seat.studentName && !seat.feeSubmissionDate
               ? "Not Available"
-              : seat.feeSubmissionDate.slice(0, 10)}
+              : seat?.feeSubmissionDate?.slice(0, 10)}
           </p>
           <p>
             <strong>Description:</strong> {seat.description || "No Description"}

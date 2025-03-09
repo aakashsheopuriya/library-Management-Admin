@@ -52,8 +52,6 @@ router.put("/seats/:seatNumber", async (req, res) => {
 });
 
 router.get("/check-fees", async (req, res) => {
-  console.log("hello");
-
   try {
     const today = new Date();
 
