@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaChair, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Header from "./Header";
 import StudentDetail from "./StudentDetail";
 
 const SeatList = () => {
   const [seats, setSeats] = useState([]);
+  const [seatMap, setSeatMap] = useState(new Map());
   const [error, setError] = useState(null);
   const [selectedSeat, setSelectedSeat] = useState(null);
-  const [showDetails, setShowDetails] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const getSeatClasses = (seat) => {
@@ -27,69 +29,44 @@ const SeatList = () => {
         const response = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/api/seats`
         );
-        setSeats(response.data);
-      } catch (error) {
+        const seatList = response.data;
+        setSeats(seatList);
+        const map = new Map();
+        seatList.forEach((seat) => map.set(seat.seatNumber, seat));
+        setSeatMap(map);
+      } catch (err) {
         setError("Error fetching seats.");
-        console.error("Error:", error);
+        console.error("Fetch error:", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchSeats();
 
     const checkFees = async () => {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/api/seats/check-fees`
         );
-        {
-          response.data.students.length > 0 &&
-            alert(`Pending Payments:  ${response.data.students}`);
+        const students = response.data.students;
+        if (students.length > 0) {
+          toast.warn(`Pending Payments: ${students.join(", ")}`);
         }
-      } catch (error) {
-        console.error("Error fetching fee data:", error);
-        return [];
+      } catch (err) {
+        console.error("Fee check error:", err);
       }
     };
+
+    fetchSeats();
     checkFees();
   }, []);
 
   const handleSeatClick = (seat) => {
     setSelectedSeat(seat);
-    setShowDetails(true);
   };
 
   const closeSeatDetail = () => {
     setSelectedSeat(null);
   };
-
-  if (error)
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364] px-6">
-        <div className="max-w-md text-center">
-          <h1 className="text-3xl font-bold text-gray-300 mt-6">
-            Oops! Something went wrong.
-          </h1>
-          <p className="text-gray-400 mt-2">
-            {error || "An unexpected error occurred."}
-          </p>
-
-          <button
-            onClick={() => navigate("/")}
-            className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all"
-          >
-            Go Back Home
-          </button>
-        </div>
-      </div>
-    );
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364]">
-        <div className="w-16 h-16 border-4 border-t-transparent border-b-transparent border-white rounded-full animate-spin"></div>
-      </div>
-    );
-  }
 
   const arrangedSeats = [
     [1, 2, 3, null, 4, 5, 6, 7, 8],
@@ -108,52 +85,41 @@ const SeatList = () => {
     [98, 99, 100, null, 101, 102, 103, 104, 105],
   ];
 
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364] px-6">
+        <div className="max-w-md text-center">
+          <h1 className="text-3xl font-bold text-gray-300 mt-6">
+            Oops! Something went wrong.
+          </h1>
+          <p className="text-gray-400 mt-2">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364]">
+        <div className="w-16 h-16 border-4 border-t-transparent border-b-transparent border-white rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364] flex flex-col items-center py-6">
       <Header />
-      <div className="hidden md:block  flex-col gap-4 mt-8 ">
+      <ToastContainer />
+      <div className="flex flex-col gap-2 mt-8">
         {arrangedSeats.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex gap-4 justify-center">
+          <div key={rowIndex} className="flex gap-2 justify-center flex-wrap">
             {row.map((seatNumber, index) => {
-              if (seatNumber === null) {
-                return <div key={index} className="w-20 "></div>;
-              }
-              const seat = seats.find((s) => s.seatNumber === seatNumber);
+              if (seatNumber === null) return <div key={index} className="w-8" />;
+              const seat = seatMap.get(seatNumber);
               return (
                 <div
                   key={`${rowIndex}-${seatNumber}`}
-                  className={`w-20 h-20 flex flex-col justify-center items-center rounded-lg shadow-lg my-2 p-2 border backdrop-blur-lg bg-opacity-20 transition-transform transform hover:scale-105
-                    ${getSeatClasses(seat)}
-                    `}
-                  onClick={() => handleSeatClick(seat)}
-                >
-                  <FaChair className="text-2xl mb-1" />
-                  <h3 className="text-sm font-semibold">{seatNumber}</h3>
-                  {seat?.studentName ? (
-                    <FaCheckCircle className="text-green-400" />
-                  ) : (
-                    <FaTimesCircle className="text-red-400" />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-      <div className="md:hidden flex flex-col gap-2 mt-8">
-        {arrangedSeats.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex gap-2  justify-center flex-wrap">
-            {row.map((seatNumber, index) => {
-              if (seatNumber === null) {
-                return <div key={index} className="w-8"></div>;
-              }
-              const seat = seats.find((s) => s.seatNumber === seatNumber);
-              return (
-                <div
-                  key={`${rowIndex}-${seatNumber}`}
-                  className={`w-9 h-9 my-1  flex justify-center items-center rounded-md shadow-md border backdrop-blur-lg bg-opacity-20 text-white text-sm md:w-20 md:h-20 md:text-base transition-transform transform hover:scale-105 ${getSeatClasses(
-                    seat
-                  )}`}
+                  className={`cursor-pointer w-9 h-9 my-1 flex justify-center items-center rounded-md shadow-md border backdrop-blur-lg bg-opacity-20 text-white text-sm transition-transform transform hover:scale-105 ${getSeatClasses(seat)}`}
                   onClick={() => handleSeatClick(seat)}
                 >
                   {seatNumber}
@@ -163,6 +129,7 @@ const SeatList = () => {
           </div>
         ))}
       </div>
+
       {selectedSeat && (
         <StudentDetail seat={selectedSeat} closeDetail={closeSeatDetail} />
       )}

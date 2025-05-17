@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaSave, FaArrowLeft } from "react-icons/fa";
+import { ToastContainer, toast } from "react-toastify";
 
 const EditSeat = () => {
   const { seatNumber } = useParams();
@@ -48,6 +49,7 @@ const EditSeat = () => {
         `${import.meta.env.VITE_BACKEND_URL}/api/seats/seats/${seatNumber}`,
         seat
       );
+      toast.success(`Updated Successfully`);
       navigate("/");
     } catch (error) {
       console.error("Error updating seat details:", error);
