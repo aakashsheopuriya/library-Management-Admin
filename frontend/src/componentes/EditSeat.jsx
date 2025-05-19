@@ -91,7 +91,7 @@ const EditSeat = () => {
             <input
               type="text"
               name="studentName"
-              value={seat.studentName}
+              value={seat?.studentName}
               onChange={handleChange}
               placeholder="Enter student name"
               className="input-field rounded-md px-2 py-1 text-gray-800 bg-[#bfd5df]"
@@ -103,7 +103,7 @@ const EditSeat = () => {
             <input
               type="email"
               name="email"
-              value={seat.email}
+              value={seat?.email}
               onChange={handleChange}
               placeholder="Enter email"
               className="input-field rounded-md px-2 py-1 text-gray-800 bg-[#bfd5df]"
@@ -115,7 +115,7 @@ const EditSeat = () => {
             <input
               type="text"
               name="phone"
-              value={seat.phone}
+              value={seat?.phone}
               onChange={handleChange}
               placeholder="Enter phone number"
               className="input-field rounded-md px-2 py-1 text-gray-800 bg-[#bfd5df]"
@@ -127,7 +127,7 @@ const EditSeat = () => {
             <input
               type="text"
               name="address"
-              value={seat.address}
+              value={seat?.address}
               onChange={handleChange}
               placeholder="Enter address"
               className="input-field rounded-md px-2 py-1 text-gray-800 bg-[#bfd5df]"
@@ -138,7 +138,7 @@ const EditSeat = () => {
             <label className="text-gray-300 mb-1">Payment Status</label>
             <select
               name="paymentStatus"
-              value={seat.paymentStatus}
+              value={seat?.paymentStatus}
               onChange={handleChange}
               className="input-field rounded-md px-2 py-1 text-gray-800 bg-[#bfd5df]"
             >
@@ -156,7 +156,7 @@ const EditSeat = () => {
                 name="feeSubmissionDate"
                 value={
                   seat.feeSubmissionDate
-                    ? new Date(seat.feeSubmissionDate)
+                    ? new Date(seat?.feeSubmissionDate)
                         .toISOString()
                         .split("T")[0]
                     : ""
@@ -173,7 +173,7 @@ const EditSeat = () => {
                 type="date"
                 required
                 name="feeSubmissionDate"
-                value={null}
+                value=''
                 onChange={handleChange}
                 className="cursor-not-allowed input-field rounded-md px-2 py-1 text-gray-800 bg-[#bfd5df]"
               />
@@ -184,7 +184,7 @@ const EditSeat = () => {
             <label className="text-gray-300 mb-1">Description</label>
             <textarea
               name="description"
-              value={seat.description}
+              value={seat?.description}
               onChange={handleChange}
               placeholder="Enter additional details..."
               className="input-field h-28 rounded-md px-2 py-1 text-gray-800 bg-[#bfd5df]"
