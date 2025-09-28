@@ -5,7 +5,20 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const seats = await Seat.find().sort({ seatNumber: 1 });
+    const { room } = req.query; // read ?room=1 or ?room=2
+    let seats;
+
+    if (room === "1") {
+      seats = await Seat.find({
+        seatNumber: { $gte: 1, $lte: 105 },
+      }).sort({ seatNumber: 1 });
+    } else if (room === "2") {
+      seats = await Seat.find({
+        seatNumber: { $gte: 106, $lte: 218 },
+      }).sort({ seatNumber: 1 });
+    } else {
+      seats = await Seat.find().sort({ seatNumber: 1 });
+    }
     res.json(seats);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
@@ -53,8 +66,7 @@ router.put("/seats/:seatNumber", async (req, res) => {
 
 router.put("/empty/:seatId", async (req, res) => {
   try {
-    const { seatId } = req.params.seatId;
-    console.log(req.params.seatId);
+    const { seatId } = req.params;
 
     // Find and update the seat
     const updatedSeat = await Seat.findByIdAndUpdate(

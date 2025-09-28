@@ -1,5 +1,6 @@
 import { FaTimesCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom"; // for navigating to the edit page
+import PropTypes from "prop-types";
 
 const StudentDetail = ({ seat, closeDetail }) => {
   const navigate = useNavigate();
@@ -53,6 +54,10 @@ const StudentDetail = ({ seat, closeDetail }) => {
       </div>
     </div>
   );
+};
+StudentDetail.propTypes = {
+  seat: PropTypes.object.isRequired,
+  closeDetail: PropTypes.func.isRequired,
 };
 
 export default StudentDetail;
